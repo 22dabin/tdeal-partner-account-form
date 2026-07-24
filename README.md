@@ -1,0 +1,1 @@
+# tdeal-partner-account-form
