@@ -719,7 +719,7 @@
 
   <script>
     // ⚠️ Apps Script 웹앱 배포 URL로 교체 필수
-    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbySPeb_qIumCkcxzcsh5rg9oxhcuoZWZeXKMeqCd_REv5ItRL4DuNdxVB0g4RqJDoz-ew/exec';
+    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwKMKziM5e7dLlcLFwhahXBSwJj4x8Fm93ZHTGu3dOWwzRqa7wNciKGCxeVVBbLJoL41A/exec';
 
     const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
@@ -1287,61 +1287,99 @@
         showProgress('파일 준비 중...', 35);
 
         // ─────────────────────────────────────────
-        // 단계 3: FormData 구성
+        // 단계 3: 두 파일을 별도 요청으로 병렬 업로드 (35% → 88%)
+        // 각 파일이 서로 다른 Apps Script 인스턴스에서 동시 처리되어
+        // 실질적으로 전체 대기 시간을 절반 가까이 단축.
+        //
+        // 시뮬레이션 프로그레스: 두 요청 중 늦은 쪽 기준으로 진행률 표시
         // ─────────────────────────────────────────
-        const formData = new FormData();
-        formData.append('company',           form.company.value);
-        formData.append('businessNumber',    form.businessNumber.value);
-        formData.append('phone',             form.phone.value);
-        formData.append('email',             form.email.value);
-        formData.append('newAccount',        form.newAccount.value);
-        formData.append('changeDate',        form.changeDate.value);
-        formData.append('note',              form.note.value);
-        formData.append('officialDocBase64', officialDocBase64);
-        formData.append('officialDocName',   finalOfficialFile.name);
-        formData.append('officialDocType',   finalOfficialFile.type || 'application/octet-stream');
-        formData.append('bankbookBase64',    bankbookBase64);
-        formData.append('bankbookName',      finalBankbookFile.name);
-        formData.append('bankbookType',      finalBankbookFile.type || 'application/octet-stream');
+        // 파일별 전송 예상 시간 (base64 크기 기반)
+        const officialBytes = officialDocBase64.length;
+        const bankbookBytes = bankbookBase64.length;
+        const maxBytes = Math.max(officialBytes, bankbookBytes);
+        // 병렬 실행이므로 큰 파일 하나 기준으로 시간 추정
+        const estimatedMs = Math.max(3000, (maxBytes / (1024 * 1024)) * 1500);
 
-        // ─────────────────────────────────────────
-        // 단계 4: 서버 전송 (35% → 92%)
-        // fetch + FormData는 CORS preflight를 발생시키지 않아 안전함.
-        // 대신 fetch는 업로드 진행률을 지원 안 하므로, 파일 크기 기반으로
-        // 자연스럽게 % 증가하는 시뮬레이션 프로그레스를 병행 표시.
-        // ─────────────────────────────────────────
-        // 총 전송량(base64 크기 합)으로 예상 소요 시간 추정
-        const totalBytes = officialDocBase64.length + bankbookBase64.length;
-        // 경험적 추정: base64 1MB당 약 1.5초 (네트워크에 따라 다름)
-        const estimatedMs = Math.max(3000, (totalBytes / (1024 * 1024)) * 1500);
-
-        // 시뮬레이션 프로그레스 시작 (35% → 88% 구간을 서서히 채움)
+        // 시뮬레이션 프로그레스 시작 (35% → 85%)
         const simStartTime = Date.now();
         const simStartPercent = 35;
-        const simEndPercent = 88;
+        const simEndPercent = 85;
         const simInterval = setInterval(() => {
           const elapsed = Date.now() - simStartTime;
-          const ratio = Math.min(elapsed / estimatedMs, 0.98); // 최대 98%까지만
+          const ratio = Math.min(elapsed / estimatedMs, 0.98);
           const percent = simStartPercent + (simEndPercent - simStartPercent) * ratio;
           showProgress('서버로 전송 중...', percent);
         }, 200);
+
+        // 현재 timestamp 기반 dateStr (YYMMDD) - 두 파일 모두 같은 날짜로
+        const now = new Date();
+        const yy = String(now.getFullYear()).slice(2);
+        const mm = String(now.getMonth() + 1).padStart(2, '0');
+        const dd = String(now.getDate()).padStart(2, '0');
+        const dateStr = yy + mm + dd;
+
+        // 단일 파일 업로드 함수 (병렬 실행용)
+        async function uploadOneFile(fieldName, base64, file) {
+          const fd = new FormData();
+          fd.append('action',      'uploadFile');
+          fd.append('fieldName',   fieldName);
+          fd.append('company',     form.company.value);
+          fd.append('dateStr',     dateStr);
+          fd.append('base64',      base64);
+          fd.append('fileName',    file.name);
+          fd.append('contentType', file.type || 'application/octet-stream');
+
+          const res = await fetch(APPS_SCRIPT_URL, { method: 'POST', body: fd });
+          if (!res.ok) throw new Error('파일 업로드 실패 (HTTP ' + res.status + ')');
+          const json = await res.json();
+          if (json.status !== 'SUCCESS') throw new Error(json.message || '파일 업로드 실패');
+          return json; // { status, fileId, fileUrl }
+        }
+
+        let officialResult, bankbookResult;
+        try {
+          // ★ 병렬 실행: 두 파일이 동시에 서로 다른 인스턴스에서 처리됨
+          [officialResult, bankbookResult] = await Promise.all([
+            uploadOneFile('officialDoc', officialDocBase64, finalOfficialFile),
+            uploadOneFile('bankbook',    bankbookBase64,    finalBankbookFile)
+          ]);
+        } catch (uploadErr) {
+          clearInterval(simInterval);
+          throw uploadErr;
+        }
+
+        clearInterval(simInterval);
+        showProgress('마무리 중...', 88);
+
+        // ─────────────────────────────────────────
+        // 단계 4: finalize 요청 (88% → 95%)
+        // 시트 로그 + 이메일 큐 등록 (아주 가벼운 요청, 1~2초)
+        // ─────────────────────────────────────────
+        const finalizeFd = new FormData();
+        finalizeFd.append('action',            'finalize');
+        finalizeFd.append('company',           form.company.value);
+        finalizeFd.append('businessNumber',    form.businessNumber.value);
+        finalizeFd.append('phone',             form.phone.value);
+        finalizeFd.append('email',             form.email.value);
+        finalizeFd.append('newAccount',        form.newAccount.value);
+        finalizeFd.append('changeDate',        form.changeDate.value);
+        finalizeFd.append('note',              form.note.value);
+        finalizeFd.append('officialDocFileId', officialResult.fileId);
+        finalizeFd.append('officialDocUrl',    officialResult.fileUrl);
+        finalizeFd.append('bankbookFileId',    bankbookResult.fileId);
+        finalizeFd.append('bankbookUrl',       bankbookResult.fileUrl);
 
         let result;
         try {
           const response = await fetch(APPS_SCRIPT_URL, {
             method: 'POST',
-            body: formData
+            body: finalizeFd
           });
-          clearInterval(simInterval);
-          showProgress('서버 처리 중...', 92);
-
-          if (!response.ok) {
-            throw new Error('서버 오류 (HTTP ' + response.status + ')');
-          }
+          showProgress('마무리 중...', 95);
+          if (!response.ok) throw new Error('서버 오류 (HTTP ' + response.status + ')');
           result = await response.json();
-        } catch (fetchErr) {
-          clearInterval(simInterval);
-          throw fetchErr;
+        } catch (finalErr) {
+          throw finalErr;
         }
 
         showProgress('완료!', 100);
