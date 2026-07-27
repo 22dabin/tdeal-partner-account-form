@@ -284,6 +284,89 @@
       color: #1a73e8;
     }
 
+    /* 개인정보 수집·이용 동의 박스 */
+    .privacy-consent-box {
+      background: #f4f6f9;
+      border-radius: 8px;
+      padding: 18px 20px 14px;
+      border: 1.5px solid transparent;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    .privacy-consent-box.invalid {
+      background: #fff5f5;
+      border-color: #e53935;
+    }
+
+    .privacy-consent-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #1a73e8;
+      margin-bottom: 10px;
+    }
+
+    .privacy-consent-content {
+      font-size: 12px;
+      color: #555;
+      line-height: 1.7;
+      margin-bottom: 14px;
+    }
+
+    .privacy-consent-content p {
+      margin: 0 0 6px 0;
+    }
+
+    .privacy-consent-content ul {
+      list-style: none;
+      padding: 4px 0 4px 4px;
+      margin: 4px 0 8px 0;
+    }
+
+    .privacy-consent-content ul li {
+      padding: 2px 0;
+      color: #666;
+    }
+
+    .privacy-consent-content .notice {
+      color: #777;
+      font-size: 11.5px;
+      margin-top: 6px;
+    }
+
+    .privacy-consent-checkbox {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding-top: 10px;
+      border-top: 1px solid #e0e5eb;
+    }
+
+    .privacy-consent-box.invalid .privacy-consent-checkbox {
+      border-top-color: #f4c8c8;
+    }
+
+    .privacy-consent-box.invalid .privacy-consent-checkbox label {
+      color: #c62828;
+      font-weight: 600;
+    }
+
+    .privacy-consent-checkbox input[type="checkbox"] {
+      width: 17px;
+      height: 17px;
+      margin-top: 2px;
+      accent-color: #1a73e8;
+      flex-shrink: 0;
+    }
+
+    .privacy-consent-checkbox label {
+      margin: 0;
+      font-size: 13px;
+      color: #333;
+      font-weight: 500;
+      line-height: 1.6;
+    }
+
+    /* 기존 checkbox-group 스타일 (레거시 호환용) */
     .checkbox-group {
       display: flex;
       align-items: flex-start;
@@ -625,7 +708,7 @@
         <div class="caution-title">▼ 공문 양식 다운로드 ▼</div>
         <a href="https://drive.google.com/uc?export=download&id=1g3ZbGKz0nNtXLCc2M6OTkFtSt2nwutUY"
            target="_blank" rel="noopener noreferrer" class="download-btn">
-          📥 다운받기
+          📁 다운받기
         </a>
         <br/><br/>
         <strong>필수 항목</strong>
@@ -670,14 +753,26 @@
 
       <hr class="divider"/>
 
-      <!-- 개인정보 동의 -->
-      <div class="checkbox-group" id="agree-group">
-        <input type="checkbox" id="agree" name="agree" required />
-        <label for="agree">
-          본인은 정산 계좌 변경 처리를 위한 개인정보(성명, 연락처, 계좌 정보) 수집 및 이용에 동의합니다.
-          수집된 정보는 계좌 변경 처리 목적에만 사용되며, 처리 완료 후 즉시 파기됩니다.
-          <span class="required">*</span>
-        </label>
+      <!-- 개인정보 수집·이용 동의 -->
+      <div class="privacy-consent-box" id="agree-group">
+        <div class="privacy-consent-title">개인정보 수집·이용 동의</div>
+        <div class="privacy-consent-content">
+          <p>인크로스는 SKT T deal 운영대행 업무수행을 위하여 아래와 같이 개인정보를 수집·이용합니다.</p>
+          <ul>
+            <li>수집 주체 : 인크로스</li>
+            <li>수집 항목 : 파트너사명, 담당자명, 담당자연락처, 담당자 이메일, 정산계좌번호, 통장사본 첨부파일</li>
+            <li>수집 목적 : T deal 입점 파트너사의 정산계좌 변경 요청 접수 및 신청 내용 확인</li>
+            <li>보관 및 이용 기간 : 정산계좌 변경 업무 처리 완료 시까지 (단, 관계 법령에 따라 보관이 필요한 경우 해당 기간 동안 보관)</li>
+          </ul>
+          <p class="notice">귀하는 개인정보 수집·이용에 대한 동의를 거부할 권리가 있습니다.<br/>
+             다만 동의하지 않을 경우 정산계좌 변경 신청 및 관련 업무 처리가 제한될 수 있습니다.</p>
+        </div>
+        <div class="privacy-consent-checkbox">
+          <input type="checkbox" id="agree" name="agree" required />
+          <label for="agree">
+            위 내용을 확인하였으며 개인정보 수집·이용에 동의합니다. <span class="required">*</span>
+          </label>
+        </div>
       </div>
 
       <button type="submit" class="submit-btn">신청서 제출하기</button>
