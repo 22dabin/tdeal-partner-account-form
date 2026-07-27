@@ -29,7 +29,7 @@
 
     .header {
       text-align: center;
-      margin-bottom: 36px;
+      margin-bottom: 24px;
     }
 
     .header .badge {
@@ -55,6 +55,28 @@
       font-size: 14px;
       color: #666;
       line-height: 1.6;
+    }
+
+    /* 상단 공지 박스 */
+    .top-notice-box {
+      background: #FFFAE0;
+      border: 1.5px solid #FFD966;
+      border-radius: 8px;
+      padding: 14px 18px;
+      font-size: 13px;
+      color: #5d4037;
+      line-height: 1.9;
+      margin-bottom: 8px;
+      text-align: left;
+    }
+
+    .top-notice-box .notice-line {
+      display: block;
+    }
+
+    .top-notice-box .highlight-warning {
+      font-weight: 700;
+      color: #e65100;
     }
 
     .divider {
@@ -103,11 +125,31 @@
       background: #fafbfc;
       transition: border 0.2s;
       outline: none;
+      font-family: 'Noto Sans KR', Arial, sans-serif;
     }
 
     input:focus, select:focus, textarea:focus {
       border-color: #1a73e8;
       background: #fff;
+    }
+
+    /* 유효성 검사 실패 시 인풋 스타일 */
+    input.invalid {
+      border-color: #e53935;
+      background: #fff5f5;
+    }
+
+    /* 인라인 에러 메시지 */
+    .field-error {
+      display: none;
+      font-size: 12px;
+      color: #c62828;
+      margin-top: 6px;
+      font-weight: 500;
+    }
+
+    .field-error.show {
+      display: block;
     }
 
     textarea {
@@ -151,13 +193,39 @@
     .caution-box .caution-warning {
       margin-top: 12px;
       font-weight: 700;
-      color: #c62828;
+      color: #e65100;
     }
 
     .caution-box p.file-format-info {
       margin-top: 10px;
       font-size: 12px;
       color: #795548;
+    }
+
+    .caution-box p.file-time-info {
+      margin-top: 4px;
+      font-size: 12px;
+      color: #795548;
+      font-style: italic;
+    }
+
+    /* 다운로드 버튼 */
+    .download-btn {
+      display: inline-block;
+      background: #1a73e8;
+      color: #fff !important;
+      text-decoration: none !important;
+      padding: 8px 18px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      margin-top: 6px;
+      transition: background 0.2s;
+    }
+
+    .download-btn:hover {
+      background: #1558b0;
+      text-decoration: none !important;
     }
 
     .file-upload-area {
@@ -167,12 +235,21 @@
       text-align: center;
       background: #f9fafb;
       cursor: pointer;
-      transition: border-color 0.2s;
+      transition: border-color 0.2s, background 0.2s;
     }
 
     .file-upload-area:hover {
       border-color: #1a73e8;
       background: #e8f0fe;
+    }
+
+    .file-upload-area.invalid {
+      border-color: #e53935;
+      background: #fff5f5;
+    }
+
+    .file-upload-area.invalid p strong {
+      color: #c62828;
     }
 
     .file-upload-area input[type="file"] {
@@ -200,6 +277,17 @@
       background: #f4f6f9;
       border-radius: 8px;
       padding: 14px 16px;
+      border: 1.5px solid transparent;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    .checkbox-group.invalid {
+      background: #fff5f5;
+      border-color: #e53935;
+    }
+
+    .checkbox-group.invalid label {
+      color: #c62828;
     }
 
     .checkbox-group input[type="checkbox"] {
@@ -242,11 +330,52 @@
       cursor: not-allowed;
     }
 
+    /* 변경 시점 요청 안내 텍스트 */
+    .changedate-guide {
+      font-size: 12px;
+      line-height: 1.8;
+      margin-top: 10px;
+      padding: 4px 2px;
+    }
+
+    .changedate-guide .guide-main {
+      color: #555;
+      font-weight: 400;
+    }
+
+    .changedate-guide .guide-sub {
+      display: inline-block;
+      padding-left: 12px;
+      color: #a0a0a0;
+      font-size: 11.5px;
+    }
+
+    /* 이전 sub-line 클래스 (하위호환용) */
+    .changedate-guide .sub-line {
+      padding-left: 10px;
+      color: #a0a0a0;
+    }
+
+    /* 제출 버튼 아래 안내 문구 */
+    .submit-notice {
+      text-align: center;
+      font-size: 12px;
+      color: #888;
+      margin-top: 12px;
+      line-height: 1.6;
+    }
+
+    .footer-divider {
+      border: none;
+      border-top: 1.5px solid #f0f0f0;
+      margin: 24px 0 16px;
+    }
+
     .footer-note {
       text-align: center;
       font-size: 12px;
       color: #aaa;
-      margin-top: 20px;
+      margin-top: 0;
     }
 
     @media (max-width: 540px) {
@@ -265,32 +394,42 @@
          처리 완료 후 등록하신 이메일로 결과를 안내드립니다.</p>
     </div>
 
+    <!-- 상단 공지 박스 -->
+    <div class="top-notice-box">
+      <span class="notice-line">★ 매월 <strong>1일~8일</strong> 변경 요청 건 : <strong>즉시 반영</strong> 가능</span>
+      <span class="notice-line">★ 매월 <strong>9일~말일</strong> 변경 요청 건 : <strong>익월 반영</strong> 가능</span>
+      <span class="notice-line highlight-warning">★ 공문 없을 경우 계좌 변경 불가능 ★</span>
+    </div>
+
     <hr class="divider"/>
 
-    <form id="accountChangeForm">
+    <form id="accountChangeForm" novalidate>
 
       <!-- 신청자 정보 -->
       <p class="section-title">신청자 정보</p>
 
       <div class="row">
         <div class="form-group">
-          <label>파트너사명 <span class="required">*</span></label>
-          <input type="text" name="company" placeholder="파트너사명 입력" required />
+          <label>Shopby 파트너사명 <span class="required">*</span></label>
+          <input type="text" name="company" placeholder="Shopby 파트너사명 입력" required />
         </div>
         <div class="form-group">
-          <label>담당자명 <span class="required">*</span></label>
-          <input type="text" name="manager" placeholder="담당자 이름 입력" required />
+          <label>사업자번호 <span class="required">*</span></label>
+          <input type="text" name="businessNumber" id="businessNumber" placeholder="000-00-00000" required />
+          <p class="field-error" id="businessNumber-error">-를 포함하여 적어주세요. (ex. 123-45-67890)</p>
         </div>
       </div>
 
       <div class="row">
         <div class="form-group">
           <label>담당자 연락처 <span class="required">*</span></label>
-          <input type="tel" name="phone" placeholder="010-0000-0000" required />
+          <input type="tel" name="phone" id="phone" placeholder="010-0000-0000" required />
+          <p class="field-error" id="phone-error">-를 포함하여 적어주세요. (ex. 010-1234-5678)</p>
         </div>
         <div class="form-group">
           <label>담당자 이메일 <span class="required">*</span></label>
-          <input type="email" name="email" placeholder="example@email.com" required />
+          <input type="email" name="email" id="email" placeholder="example@email.com" required />
+          <p class="field-error" id="email-error">올바른 이메일 형식을 입력해주세요.</p>
         </div>
       </div>
 
@@ -301,12 +440,21 @@
 
       <div class="form-group">
         <label>신규 계좌번호 <span class="required">*</span></label>
-        <input type="text" name="newAccount" placeholder="- 포함하여 입력" required />
+        <input type="text" name="newAccount" id="newAccount" placeholder="- 포함하여 입력" required />
+        <p class="field-error" id="newAccount-error">-를 포함하여 작성해주세요.</p>
       </div>
 
       <div class="form-group">
         <label>변경 시점 요청</label>
         <input type="text" name="changeDate" placeholder="예) 2026년 7월 정산분부터 / 즉시 변경 등" />
+        <p class="changedate-guide">
+          <span class="guide-main">※ 특정 월부터 변경 원하실 경우에만 작성 부탁드립니다.</span><br/>
+          <span class="guide-sub">- 1월 1일로 작성할 경우 1월 정산분(2월 25일 지급분)부터 변경</span><br/>
+          <br/>
+          <span class="guide-main">※ 작성하지 않으시거나 기한이 지났을 경우 아래와 같이 반영됩니다.</span><br/>
+          <span class="guide-sub">- 매월 1일~8일 변경 요청 건 : 즉시 반영 가능</span><br/>
+          <span class="guide-sub">- 9일~말일 변경 요청 건 : 익월 반영 가능</span>
+        </p>
       </div>
 
       <hr class="divider"/>
@@ -316,8 +464,9 @@
 
       <div class="caution-box">
         <div class="caution-title">▼ 공문 양식 다운로드 ▼</div>
-        <a href="https://drive.google.com/uc?export=download&id=1g3ZbGKz0nNtXLCc2M6OTkFtSt2nwutUY" target="_blank" rel="noopener noreferrer">
-          https://drive.google.com/uc?export=download&id=1g3ZbGKz0nNtXLCc2M6OTkFtSt2nwutUY (opens in new tab)
+        <a href="https://drive.google.com/uc?export=download&id=1g3ZbGKz0nNtXLCc2M6OTkFtSt2nwutUY"
+           target="_blank" rel="noopener noreferrer" class="download-btn">
+          📥 다운받기
         </a>
         <br/><br/>
         <strong>필수 항목</strong>
@@ -330,26 +479,29 @@
         </ol>
         <div class="caution-warning">★ 내용 상이하거나 누락될 경우 변경 불가합니다. ★</div>
         <p class="file-format-info">파일 형식: JPG, PNG, PDF, DOCX / 최대 10MB</p>
+        <p class="file-time-info">※ 파일 크기가 큰 경우에는 제출에 시간이 다소 소요될 수 있습니다.</p>
       </div>
 
       <div class="form-group">
         <label>계좌 변경 공문 <span class="required">*</span></label>
-        <div class="file-upload-area" onclick="document.getElementById('officialDoc').click()">
+        <div class="file-upload-area" id="officialDoc-area" onclick="document.getElementById('officialDoc').click()">
           <input type="file" id="officialDoc" name="officialDoc" accept=".jpg,.jpeg,.png,.pdf,.docx" required />
           <div class="upload-icon">📋</div>
           <p><strong>파일 선택</strong></p>
           <p id="officialDoc-name" style="margin-top:6px;color:#1a73e8;font-size:12px;"></p>
         </div>
+        <p class="field-error" id="officialDoc-error">계좌 변경 공문을 첨부해주세요.</p>
       </div>
 
       <div class="form-group">
         <label>통장 사본 (변경 후) <span class="required">*</span></label>
-        <div class="file-upload-area" onclick="document.getElementById('bankbook').click()">
+        <div class="file-upload-area" id="bankbook-area" onclick="document.getElementById('bankbook').click()">
           <input type="file" id="bankbook" name="bankbook" accept=".jpg,.jpeg,.png,.pdf,.docx" required />
           <div class="upload-icon">💳</div>
           <p><strong>파일 선택</strong></p>
           <p id="bankbook-name" style="margin-top:6px;color:#1a73e8;font-size:12px;"></p>
         </div>
+        <p class="field-error" id="bankbook-error">변경 후 통장 사본을 첨부해주세요.</p>
       </div>
 
       <div class="form-group" style="margin-top: 24px;">
@@ -360,7 +512,7 @@
       <hr class="divider"/>
 
       <!-- 개인정보 동의 -->
-      <div class="checkbox-group">
+      <div class="checkbox-group" id="agree-group">
         <input type="checkbox" id="agree" name="agree" required />
         <label for="agree">
           본인은 정산 계좌 변경 처리를 위한 개인정보(성명, 연락처, 계좌 정보) 수집 및 이용에 동의합니다.
@@ -370,7 +522,13 @@
       </div>
 
       <button type="submit" class="submit-btn">신청서 제출하기</button>
+
+      <p class="submit-notice">
+        ※ 제출 완료까지 시간이 다소 소요될 수 있습니다.
+      </p>
     </form>
+
+    <hr class="footer-divider"/>
 
     <p class="footer-note">문의 : 인크로스 T deal 사업부  |  tdeal_partner@incross.com </p>
   </div>
@@ -380,19 +538,228 @@
 
   <script>
     // ⚠️ Apps Script 웹앱 배포 URL로 교체 필수
-    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz8h4PiDhv6Qv4BS8R-KFpzcfFaChgNV2vbWU1Dnw2FUDMApjrxejwqC5IriCe5zMkLJg/exec';
+    const APPS_SCRIPT_URL = 'https://script.google.com/a/macros/incross.com/s/AKfycbzN7SQvuK1pgqu59RyFPy5V6QIqah4hL9IDbhnhrxzNyDLcNPFoOgSwYup202QW3ILmpA/exec';
 
     const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
-    // 파일명 표시
+    // ============================================
+    // 백엔드 워밍업 (Cold Start 회피)
+    // ============================================
+    // Apps Script는 5~15분 동안 요청이 없으면 콜드 상태로 돌아가 실행 시 1~3초 지연됨.
+    // 두 시점에 백그라운드로 미리 깨워두면 실제 제출 시 응답 속도가 빨라짐.
+    //
+    //   1차 워밍: 사용자가 폼을 처음 만졌을 때 (첫 focus 또는 첫 input)
+    //   2차 워밍: 계좌 변경 공문 첨부 완료 시점
+    //             (공문은 다운로드 → 인쇄 → 날인 → 스캔이 필요해 시간이 오래 걸림.
+    //              이 사이에 1차 워밍이 만료됐을 가능성이 크므로 재워밍 필수)
+    //
+    // - fire-and-forget 방식 (응답 무시)
+    // - 실패해도 폼 동작에 영향 없음
+    let hasFirstWarmedUp = false;
+    function warmUpBackend(force) {
+      // force=false: 최초 1회만 실행 (여러 필드에서 중복 호출 방지)
+      // force=true : 명시적 재워밍 (공문 첨부 시점 등)
+      if (!force && hasFirstWarmedUp) return;
+      hasFirstWarmedUp = true;
+
+      try {
+        fetch(APPS_SCRIPT_URL, {
+          method: 'GET',
+          mode: 'no-cors',
+          keepalive: true
+        }).catch(() => { /* 실패 무시: 워밍은 부가 기능 */ });
+      } catch (_) {
+        // 어떤 이유로든 실패해도 무시
+      }
+    }
+
+    // 페이지 로드 시 워밍업 이벤트 리스너 바인딩
+    document.addEventListener('DOMContentLoaded', function () {
+      // ─── 1차 워밍: 폼 필드를 처음 만졌을 때 ───
+      const fields = document.querySelectorAll(
+        '#accountChangeForm input, #accountChangeForm textarea, #accountChangeForm select'
+      );
+      fields.forEach(el => {
+        // focus: 필드 클릭/탭 이동 시 (가장 이른 시점)
+        el.addEventListener('focus', () => warmUpBackend(false), { once: true });
+        // input: 첫 글자 입력 시 (백업)
+        el.addEventListener('input', () => warmUpBackend(false), { once: true });
+      });
+
+      // ─── 2차 워밍: 계좌 변경 공문 첨부 완료 시점 ───
+      // 공문 준비(다운로드→작성→날인→스캔)에 시간이 오래 걸려
+      // 1차 워밍이 만료됐을 가능성이 큼. 첨부 완료 시 재워밍.
+      const officialDocInput = document.getElementById('officialDoc');
+      if (officialDocInput) {
+        officialDocInput.addEventListener('change', function () {
+          if (this.files && this.files[0]) {
+            warmUpBackend(true); // 강제 재실행
+          }
+        });
+      }
+    });
+
+    // ============================================
+    // 유효성 검사 함수
+    // ============================================
+
+    // 연락처: '-'가 2개 이상 포함되어야 함
+    function validatePhone(value) {
+      if (!value.trim()) return { valid: false, msg: '연락처를 입력해주세요.' };
+      const dashCount = (value.match(/-/g) || []).length;
+      if (dashCount < 2) {
+        return { valid: false, msg: '-를 포함하여 적어주세요. (ex. 010-1234-5678)' };
+      }
+      return { valid: true };
+    }
+
+    // 이메일: @와 .이 모두 포함되어야 함
+    function validateEmail(value) {
+      if (!value.trim()) return { valid: false, msg: '이메일을 입력해주세요.' };
+      if (!value.includes('@') || !value.includes('.')) {
+        return { valid: false, msg: '올바른 이메일 형식을 입력해주세요.' };
+      }
+      // @ 뒤에 . 이 있어야 진짜 유효
+      const atIdx = value.indexOf('@');
+      const dotIdxAfterAt = value.indexOf('.', atIdx);
+      if (dotIdxAfterAt === -1) {
+        return { valid: false, msg: '올바른 이메일 형식을 입력해주세요.' };
+      }
+      return { valid: true };
+    }
+
+    // 계좌번호: '-'가 포함되어야 함
+    function validateAccount(value) {
+      if (!value.trim()) return { valid: false, msg: '계좌번호를 입력해주세요.' };
+      if (!value.includes('-')) {
+        return { valid: false, msg: '-를 포함하여 작성해주세요.' };
+      }
+      return { valid: true };
+    }
+
+    // 사업자번호: 4단계 검증
+    // 1) 빈 값
+    // 2) 숫자 10자리가 아님 → 형식 오류
+    // 3) 숫자 10자리 + 하이픈 아예 없음 → 하이픈 누락 안내
+    // 4) 숫자 10자리이고 하이픈은 있으나 nnn-nn-nnnnn 형식이 아님 → 형식 오류 (2번과 동일 안내)
+    function validateBusinessNumber(value) {
+      const v = value.trim();
+      if (!v) {
+        return { valid: false, msg: '사업자번호를 입력해주세요.' };
+      }
+      const digitsOnly = v.replace(/\D/g, '');
+      if (digitsOnly.length !== 10) {
+        return { valid: false, msg: '올바른 사업자번호 형식으로 입력해주세요.' };
+      }
+      const pattern = /^\d{3}-\d{2}-\d{5}$/;
+      if (pattern.test(v)) {
+        return { valid: true };
+      }
+      // 숫자는 10자리인데 형식 어긋남 → 하이픈 유무에 따라 다르게 안내
+      const dashCount = (v.match(/-/g) || []).length;
+      if (dashCount === 0) {
+        return { valid: false, msg: '-를 포함하여 적어주세요. (ex. 123-45-67890)' };
+      }
+      return { valid: false, msg: '올바른 사업자번호 형식으로 입력해주세요.' };
+    }
+
+    // 에러 표시/제거 헬퍼
+    function showError(inputId, errorId, msg) {
+      const input = document.getElementById(inputId);
+      const errorEl = document.getElementById(errorId);
+      input.classList.add('invalid');
+      errorEl.textContent = msg;
+      errorEl.classList.add('show');
+    }
+
+    function clearError(inputId, errorId) {
+      const input = document.getElementById(inputId);
+      const errorEl = document.getElementById(errorId);
+      input.classList.remove('invalid');
+      errorEl.classList.remove('show');
+    }
+
+    // 실시간 유효성 검사 (blur 시)
+    document.getElementById('phone').addEventListener('blur', function () {
+      const result = validatePhone(this.value);
+      if (!result.valid && this.value.trim()) {
+        showError('phone', 'phone-error', result.msg);
+      } else {
+        clearError('phone', 'phone-error');
+      }
+    });
+
+    document.getElementById('email').addEventListener('blur', function () {
+      const result = validateEmail(this.value);
+      if (!result.valid && this.value.trim()) {
+        showError('email', 'email-error', result.msg);
+      } else {
+        clearError('email', 'email-error');
+      }
+    });
+
+    document.getElementById('newAccount').addEventListener('blur', function () {
+      const result = validateAccount(this.value);
+      if (!result.valid && this.value.trim()) {
+        showError('newAccount', 'newAccount-error', result.msg);
+      } else {
+        clearError('newAccount', 'newAccount-error');
+      }
+    });
+
+    document.getElementById('businessNumber').addEventListener('blur', function () {
+      const result = validateBusinessNumber(this.value);
+      if (!result.valid && this.value.trim()) {
+        showError('businessNumber', 'businessNumber-error', result.msg);
+      } else {
+        clearError('businessNumber', 'businessNumber-error');
+      }
+    });
+
+    // 입력 중에는 에러 제거
+    ['phone', 'email', 'newAccount', 'businessNumber'].forEach(id => {
+      document.getElementById(id).addEventListener('input', function () {
+        clearError(id, id + '-error');
+      });
+    });
+
+    // 개인정보 동의 체크 시 invalid 상태 해제
+    document.getElementById('agree').addEventListener('change', function () {
+      if (this.checked) {
+        document.getElementById('agree-group').classList.remove('invalid');
+      }
+    });
+
+    // ============================================
+    // 파일 유효성 표시 헬퍼
+    // ============================================
+    function showFileError(areaId, errorId) {
+      document.getElementById(areaId).classList.add('invalid');
+      document.getElementById(errorId).classList.add('show');
+    }
+
+    function clearFileError(areaId, errorId) {
+      document.getElementById(areaId).classList.remove('invalid');
+      document.getElementById(errorId).classList.remove('show');
+    }
+
+    // ============================================
+    // 파일명 표시 + 선택 시 invalid 자동 해제
+    // ============================================
     document.getElementById('officialDoc').addEventListener('change', function () {
       const name = this.files[0]?.name || '';
       document.getElementById('officialDoc-name').textContent = name ? '선택된 파일: ' + name : '';
+      if (this.files[0]) {
+        clearFileError('officialDoc-area', 'officialDoc-error');
+      }
     });
 
     document.getElementById('bankbook').addEventListener('change', function () {
       const name = this.files[0]?.name || '';
       document.getElementById('bankbook-name').textContent = name ? '선택된 파일: ' + name : '';
+      if (this.files[0]) {
+        clearFileError('bankbook-area', 'bankbook-error');
+      }
     });
 
     // 파일을 base64 문자열로 변환
@@ -400,7 +767,6 @@
       return new Promise((resolve, reject) => {
         const reader = new FileReader();
         reader.onload = () => {
-          // "data:mime/type;base64,AAAA..." 형식에서 base64 부분만 추출
           const base64 = reader.result.split(',')[1];
           resolve(base64);
         };
@@ -409,22 +775,83 @@
       });
     }
 
-    // 폼 제출 이벤트 바인딩
+    // ============================================
+    // 폼 제출
+    // ============================================
     document.getElementById('accountChangeForm').addEventListener('submit', handleSubmit);
 
     async function handleSubmit(e) {
       e.preventDefault();
 
-      if (!document.getElementById('agree').checked) {
-        alert('개인정보 수집 및 이용에 동의해 주세요.');
+      const form = e.target;
+
+      // 필수 텍스트 필드 확인
+      if (!form.company.value.trim()) {
+        alert('Shopby 파트너사명을 입력해주세요.');
+        form.company.focus();
         return;
       }
 
+      // 사업자번호 유효성 검사
+      const businessNumberResult = validateBusinessNumber(form.businessNumber.value);
+      if (!businessNumberResult.valid) {
+        showError('businessNumber', 'businessNumber-error', businessNumberResult.msg);
+        document.getElementById('businessNumber').focus();
+        document.getElementById('businessNumber').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+      }
+
+      // 연락처 유효성 검사
+      const phoneResult = validatePhone(form.phone.value);
+      if (!phoneResult.valid) {
+        showError('phone', 'phone-error', phoneResult.msg);
+        document.getElementById('phone').focus();
+        document.getElementById('phone').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+      }
+
+      // 이메일 유효성 검사
+      const emailResult = validateEmail(form.email.value);
+      if (!emailResult.valid) {
+        showError('email', 'email-error', emailResult.msg);
+        document.getElementById('email').focus();
+        document.getElementById('email').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+      }
+
+      // 계좌번호 유효성 검사
+      const accountResult = validateAccount(form.newAccount.value);
+      if (!accountResult.valid) {
+        showError('newAccount', 'newAccount-error', accountResult.msg);
+        document.getElementById('newAccount').focus();
+        document.getElementById('newAccount').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+      }
+
+      // 파일 확인 (각 파일 개별로 시각적 표시)
       const officialDocFile = document.getElementById('officialDoc').files[0];
       const bankbookFile    = document.getElementById('bankbook').files[0];
+      let fileError = false;
+      let firstErrorArea = null;
 
-      if (!officialDocFile || !bankbookFile) {
-        alert('계좌 변경 공문과 통장 사본을 모두 첨부해 주세요.');
+      if (!officialDocFile) {
+        showFileError('officialDoc-area', 'officialDoc-error');
+        fileError = true;
+        if (!firstErrorArea) firstErrorArea = 'officialDoc-area';
+      } else {
+        clearFileError('officialDoc-area', 'officialDoc-error');
+      }
+
+      if (!bankbookFile) {
+        showFileError('bankbook-area', 'bankbook-error');
+        fileError = true;
+        if (!firstErrorArea) firstErrorArea = 'bankbook-area';
+      } else {
+        clearFileError('bankbook-area', 'bankbook-error');
+      }
+
+      if (fileError) {
+        document.getElementById(firstErrorArea).scrollIntoView({ behavior: 'smooth', block: 'center' });
         return;
       }
 
@@ -438,25 +865,31 @@
         return;
       }
 
+      // 개인정보 동의 확인
+      if (!document.getElementById('agree').checked) {
+        const agreeGroup = document.getElementById('agree-group');
+        agreeGroup.classList.add('invalid');
+        alert('개인정보 수집 및 이용에 동의해 주세요.');
+        agreeGroup.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+      } else {
+        document.getElementById('agree-group').classList.remove('invalid');
+      }
+
       const btn = document.querySelector('.submit-btn');
       const originalText = btn.textContent;
       btn.textContent = '제출 중...';
       btn.disabled = true;
 
       try {
-        // 파일을 base64로 변환 (병렬 처리)
         const [officialDocBase64, bankbookBase64] = await Promise.all([
           fileToBase64(officialDocFile),
           fileToBase64(bankbookFile)
         ]);
 
-        const form = e.target;
-
-        // FormData에 텍스트 필드로만 담아 전송 (파일도 base64 문자열로)
-        // → Apps Script에서 e.parameter로 바로 접근 가능
         const formData = new FormData();
         formData.append('company',           form.company.value);
-        formData.append('manager',           form.manager.value);
+        formData.append('businessNumber',    form.businessNumber.value);
         formData.append('phone',             form.phone.value);
         formData.append('email',             form.email.value);
         formData.append('newAccount',        form.newAccount.value);
@@ -481,6 +914,9 @@
           form.reset();
           document.getElementById('officialDoc-name').textContent = '';
           document.getElementById('bankbook-name').textContent = '';
+          clearFileError('officialDoc-area', 'officialDoc-error');
+          clearFileError('bankbook-area', 'bankbook-error');
+          document.getElementById('agree-group').classList.remove('invalid');
         } else {
           alert('제출 실패: ' + (result.message || '알 수 없는 오류'));
           console.error('Server error:', result);
