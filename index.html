@@ -1190,45 +1190,44 @@
         formData.append('bankbookType',      finalBankbookFile.type || 'application/octet-stream');
 
         // ─────────────────────────────────────────
-        // 단계 4: XHR로 전송 (35% → 90%: 업로드 진행률 실시간 표시)
-        // fetch API는 upload progress event를 지원 안 하므로 XHR 사용
-        // FormData는 simple request라 CORS preflight 발생하지 않음
+        // 단계 4: 서버 전송 (35% → 92%)
+        // fetch + FormData는 CORS preflight를 발생시키지 않아 안전함.
+        // 대신 fetch는 업로드 진행률을 지원 안 하므로, 파일 크기 기반으로
+        // 자연스럽게 % 증가하는 시뮬레이션 프로그레스를 병행 표시.
         // ─────────────────────────────────────────
-        const result = await new Promise((resolve, reject) => {
-          const xhr = new XMLHttpRequest();
+        // 총 전송량(base64 크기 합)으로 예상 소요 시간 추정
+        const totalBytes = officialDocBase64.length + bankbookBase64.length;
+        // 경험적 추정: base64 1MB당 약 1.5초 (네트워크에 따라 다름)
+        const estimatedMs = Math.max(3000, (totalBytes / (1024 * 1024)) * 1500);
 
-          // 업로드 진행률 (35% → 90% 구간에 매핑)
-          xhr.upload.addEventListener('progress', (event) => {
-            if (event.lengthComputable) {
-              const uploadPercent = (event.loaded / event.total) * 100;
-              const mappedPercent = 35 + (uploadPercent * 0.55);
-              showProgress('서버로 전송 중...', mappedPercent);
-            }
+        // 시뮬레이션 프로그레스 시작 (35% → 88% 구간을 서서히 채움)
+        const simStartTime = Date.now();
+        const simStartPercent = 35;
+        const simEndPercent = 88;
+        const simInterval = setInterval(() => {
+          const elapsed = Date.now() - simStartTime;
+          const ratio = Math.min(elapsed / estimatedMs, 0.98); // 최대 98%까지만
+          const percent = simStartPercent + (simEndPercent - simStartPercent) * ratio;
+          showProgress('서버로 전송 중...', percent);
+        }, 200);
+
+        let result;
+        try {
+          const response = await fetch(APPS_SCRIPT_URL, {
+            method: 'POST',
+            body: formData
           });
+          clearInterval(simInterval);
+          showProgress('서버 처리 중...', 92);
 
-          // 업로드 완료 시점 (서버 처리 시작)
-          xhr.upload.addEventListener('load', () => {
-            showProgress('서버 처리 중...', 92);
-          });
-
-          xhr.addEventListener('load', () => {
-            if (xhr.status >= 200 && xhr.status < 300) {
-              try {
-                resolve(JSON.parse(xhr.responseText));
-              } catch (e) {
-                reject(new Error('서버 응답 파싱 실패'));
-              }
-            } else {
-              reject(new Error('서버 오류 (HTTP ' + xhr.status + ')'));
-            }
-          });
-
-          xhr.addEventListener('error', () => reject(new Error('네트워크 오류가 발생했습니다.')));
-          xhr.addEventListener('abort', () => reject(new Error('요청이 취소되었습니다.')));
-
-          xhr.open('POST', APPS_SCRIPT_URL);
-          xhr.send(formData);
-        });
+          if (!response.ok) {
+            throw new Error('서버 오류 (HTTP ' + response.status + ')');
+          }
+          result = await response.json();
+        } catch (fetchErr) {
+          clearInterval(simInterval);
+          throw fetchErr;
+        }
 
         showProgress('완료!', 100);
         await new Promise(r => setTimeout(r, 300)); // 100% 잠깐 보여주기
