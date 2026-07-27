@@ -580,7 +580,7 @@
         '#accountChangeForm input, #accountChangeForm textarea, #accountChangeForm select'
       );
       fields.forEach(el => {
-        // focus: 필드 클릭/탭 이동 시 (가장 이른 시점)
+        // focus: 필드 클릭 / 탭 이동 시 (가장 이른 시점)
         el.addEventListener('focus', () => warmUpBackend(false), { once: true });
         // input: 첫 글자 입력 시 (백업)
         el.addEventListener('input', () => warmUpBackend(false), { once: true });
